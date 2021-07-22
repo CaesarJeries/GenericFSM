@@ -124,6 +124,7 @@ class InCall : public State {
     }
 };
 
+class IllegalTransition : public std::exception {};
 
 class TransitionManager {
     private:
@@ -158,7 +159,13 @@ class TransitionManager {
     }
 
     std::shared_ptr<State> get_next_state(StateDescriptor sd, Event event) const {
-        return mapping[sd][event];
+        auto next_state = mapping[sd][event];
+
+        if (next_state == nullptr) {
+            throw IllegalTransition();
+        }
+
+        return next_state;
     }
 };
 
